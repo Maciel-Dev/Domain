@@ -1,0 +1,26 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Domain;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+
+namespace Domain
+{
+    public class Funcionario
+    {
+        [Required]
+        public int Id { get; set; }
+        [MaxLength(255)]
+        public string Nome { get; set; }
+        public string Sobrenome { get; set; }
+        public string Endereco { get; set; }
+        public int Cpf { get; set; }
+        public ModalidadeCargo ModalidadeCargo {get; set;}
+
+
+    }
+}
