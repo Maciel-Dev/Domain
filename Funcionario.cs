@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Domain;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Domain
 {
@@ -18,8 +19,11 @@ namespace Domain
         public string Nome { get; set; }
         public string Sobrenome { get; set; }
         public string Endereco { get; set; }
-        public int Cpf { get; set; }
-        public ModalidadeCargo ModalidadeCargo {get; set;}
+        public string Cpf { get; set; }
+        [ForeignKey("modalidadeCargoId")]
+        public virtual ModalidadeCargo ModalidadeCargo {get; set;}
+        public int? modalidadeCargoId { get; set; }
+        public IEnumerable<DepositoBeneficio> DepositoBeneficios { get; set; }
 
 
     }

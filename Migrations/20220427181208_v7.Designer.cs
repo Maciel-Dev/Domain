@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Domain.Migrations
 {
     [DbContext(typeof(FuncionarioContext))]
-    [Migration("20220426172448_V1")]
-    partial class V1
+    [Migration("20220427181208_v7")]
+    partial class v7
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -28,18 +28,17 @@ namespace Domain.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int>("NivelID")
+                    b.Property<int?>("NivelID")
                         .HasColumnType("int");
 
-                    b.Property<int>("TipoBeneficioId")
+                    b.Property<int?>("TipoBeneficioId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
                     b.HasIndex("NivelID");
 
-                    b.HasIndex("TipoBeneficioId")
-                        .IsUnique();
+                    b.HasIndex("TipoBeneficioId");
 
                     b.ToTable("Beneficios");
                 });
@@ -84,17 +83,17 @@ namespace Domain.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int>("BeneficioId")
+                    b.Property<int?>("BeneficioId")
                         .HasColumnType("int");
 
-                    b.Property<int>("FuncionarioId")
+                    b.Property<int?>("FuncionarioId")
                         .HasColumnType("int");
 
                     b.Property<float>("Value")
                         .HasColumnType("real");
 
-                    b.Property<string>("Vencimento")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<DateTime>("Vencimento")
+                        .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 
@@ -112,14 +111,11 @@ namespace Domain.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int>("Cpf")
-                        .HasColumnType("int");
+                    b.Property<string>("Cpf")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Endereco")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("ModalidadeCargoId")
-                        .HasColumnType("int");
 
                     b.Property<string>("Nome")
                         .HasMaxLength(255)
@@ -128,11 +124,14 @@ namespace Domain.Migrations
                     b.Property<string>("Sobrenome")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int?>("modalidadeCargoId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
-                    b.HasIndex("ModalidadeCargoId");
+                    b.HasIndex("modalidadeCargoId");
 
-                    b.ToTable("Funcionario");
+                    b.ToTable("Funcionarios");
                 });
 
             modelBuilder.Entity("Domain.ModalidadeCargo", b =>
@@ -142,13 +141,13 @@ namespace Domain.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int>("CargoID")
+                    b.Property<int?>("CargoID")
                         .HasColumnType("int");
 
                     b.Property<int>("ModalidadeContratoID")
                         .HasColumnType("int");
 
-                    b.Property<int>("NivelID")
+                    b.Property<int?>("NivelID")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -200,6 +199,12 @@ namespace Domain.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<int?>("Beneficio")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("BeneficioId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
@@ -211,6 +216,8 @@ namespace Domain.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Beneficio");
+
                     b.ToTable("TipoBeneficios");
                 });
 
@@ -218,15 +225,11 @@ namespace Domain.Migrations
                 {
                     b.HasOne("Domain.Nivel", "Nivel")
                         .WithMany()
-                        .HasForeignKey("NivelID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("NivelID");
 
                     b.HasOne("Domain.TipoBeneficio", "TipoBeneficio")
-                        .WithOne("Beneficios")
-                        .HasForeignKey("Domain.Beneficio", "TipoBeneficioId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .WithMany()
+                        .HasForeignKey("TipoBeneficioId");
 
                     b.Navigation("Nivel");
 
@@ -236,16 +239,12 @@ namespace Domain.Migrations
             modelBuilder.Entity("Domain.DepositoBeneficio", b =>
                 {
                     b.HasOne("Domain.Beneficio", "Beneficio")
-                        .WithMany()
-                        .HasForeignKey("BeneficioId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .WithMany("DepositoBeneficios")
+                        .HasForeignKey("BeneficioId");
 
                     b.HasOne("Domain.Funcionario", "Funcionario")
                         .WithMany()
-                        .HasForeignKey("FuncionarioId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("FuncionarioId");
 
                     b.Navigation("Beneficio");
 
@@ -256,7 +255,7 @@ namespace Domain.Migrations
                 {
                     b.HasOne("Domain.ModalidadeCargo", "ModalidadeCargo")
                         .WithMany()
-                        .HasForeignKey("ModalidadeCargoId");
+                        .HasForeignKey("modalidadeCargoId");
 
                     b.Navigation("ModalidadeCargo");
                 });
@@ -265,15 +264,11 @@ namespace Domain.Migrations
                 {
                     b.HasOne("Domain.Cargo", "Cargo")
                         .WithMany()
-                        .HasForeignKey("CargoID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("CargoID");
 
                     b.HasOne("Domain.Nivel", "Nivel")
                         .WithMany()
-                        .HasForeignKey("NivelID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("NivelID");
 
                     b.Navigation("Cargo");
 
@@ -282,7 +277,16 @@ namespace Domain.Migrations
 
             modelBuilder.Entity("Domain.TipoBeneficio", b =>
                 {
+                    b.HasOne("Domain.Beneficio", "Beneficios")
+                        .WithMany()
+                        .HasForeignKey("Beneficio");
+
                     b.Navigation("Beneficios");
+                });
+
+            modelBuilder.Entity("Domain.Beneficio", b =>
+                {
+                    b.Navigation("DepositoBeneficios");
                 });
 #pragma warning restore 612, 618
         }

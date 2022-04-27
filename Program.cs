@@ -72,35 +72,9 @@ namespace Domain
                             dbConnection.NiveisFuncionario.Add(nivel);
                             dbConnection.SaveChanges();
                         };
-                        
-
-                        var checkTipoBeneficio = dbConnection.TipoBeneficios.FirstOrDefault(x => x.Description == planilha.Cells[linha, 8].Value.ToString());
-                        //if(conn.TipoBeneficios.Any(o => o.Description == planilha.Cells[linha, 5].Value.ToString())) return;
-                        if(checkTipoBeneficio == null)
-                        {
-                            TipoBeneficio TBeneficio = new TipoBeneficio();
-                            TBeneficio.Description = planilha.Cells[linha, 8].Value.ToString();
-                            TBeneficio.Value = float.Parse(planilha.Cells[linha, 9].Value.ToString());
-                            TBeneficio.Percent = float.Parse(planilha.Cells[linha, 10].Value.ToString());
-                            dbConnection.TipoBeneficios.Add(TBeneficio);
-                            dbConnection.SaveChanges();
-                        }
-
-                        var tipoBeneficioId = dbConnection.TipoBeneficios.FirstOrDefault(x => x.Description == planilha.Cells[linha, 8].Value.ToString()).Id;
+                    
+                       
                         var nivelID = dbConnection.NiveisFuncionario.FirstOrDefault(x => x.Tipo == planilha.Cells[linha, 5].Value.ToString()).Id;
-                        var checkBeneficio = dbConnection.Beneficios.FirstOrDefault(x => x.NivelID == nivelID);
-
-                        
-                        Beneficio beneficio = new Beneficio();
-                        beneficio.NivelID = nivelID;
-                        beneficio.TipoBeneficioId = tipoBeneficioId;
-                        dbConnection.Beneficios.Add(beneficio);
-                        dbConnection.SaveChanges();
-                        
-
-                        
-                        var beneficioId = dbConnection.Beneficios.FirstOrDefault(x => x.NivelID == nivelID).Id;
-
                         var cargoId = dbConnection.Cargos.FirstOrDefault(x => x.Tipo == planilha.Cells[linha, 11].Value.ToString()).Id;
                         var modalidadeContratoId = dbConnection.ModalidadeDeContratos.FirstOrDefault(x => x.Description == planilha.Cells[linha, 7].Value.ToString()).Id;
 
@@ -113,29 +87,53 @@ namespace Domain
                         dbConnection.ModalidadeCargos.Add(modalidadeCargo);
                         dbConnection.SaveChanges();
 
+
+                        var modalidadeCargoId = dbConnection.ModalidadeCargos.FirstOrDefault(x => x.CargoID == cargoId && x.NivelID == nivelID && x.ModalidadeContratoID == modalidadeContratoId).Id;
                         
-                        var checkFuncionario = dbConnection.Funcionarios.FirstOrDefault(x => x.Cpf == long.Parse(planilha.Cells[linha, 4].Value.ToString()));
+                        var checkFuncionario = dbConnection.Funcionarios.FirstOrDefault(x => x.Cpf == Convert.ToString(planilha.Cells[linha, 4].Value.ToString()));
                         if(checkFuncionario == null)
                         {
                             Funcionario funcionario = new Funcionario();
                             funcionario.Nome = planilha.Cells[linha, 1].Value.ToString();
                             funcionario.Sobrenome = planilha.Cells[linha, 2].Value.ToString();
                             funcionario.Endereco = planilha.Cells[linha, 3].Value.ToString();
-                            funcionario.Cpf = int.Parse(planilha.Cells[linha, 4].Value.ToString());
+                            funcionario.Cpf = Convert.ToString(planilha.Cells[linha, 4].Value.ToString());
+                            funcionario.modalidadeCargoId = modalidadeCargoId;
                             dbConnection.Funcionarios.Add(funcionario);
                             dbConnection.SaveChanges();
                         }
 
-                        var checkValor = dbConnection.DepositosBeneficios.FirstOrDefault(x => x.Value == float.Parse(planilha.Cells[linha, 17].Value.ToString()));
-                        var checkVencimento = dbConnection.DepositosBeneficios.FirstOrDefault(x => x.Vencimento == planilha.Cells[linha, 18].Value.ToString());
-                        var funcionarioId = dbConnection.Funcionarios.FirstOrDefault(x => x.Cpf == long.Parse(planilha.Cells[linha, 4].Value.ToString())).Id;
+                        var checkTipoBeneficio = dbConnection.TipoBeneficios.FirstOrDefault(x => x.Description == planilha.Cells[linha, 8].Value.ToString());
+                        //if(conn.TipoBeneficios.Any(o => o.Description == planilha.Cells[linha, 5].Value.ToString())) return;
+                        if(checkTipoBeneficio == null)
+                        {
+                            TipoBeneficio TBeneficio = new TipoBeneficio();
+                            TBeneficio.Description = planilha.Cells[linha, 8].Value.ToString();
+                            TBeneficio.Value = float.Parse(planilha.Cells[linha, 9].Value.ToString());
+                            TBeneficio.Percent = float.Parse(planilha.Cells[linha, 10].Value.ToString());
+                            dbConnection.TipoBeneficios.Add(TBeneficio);
+                            dbConnection.SaveChanges();
+                        }
+                        var tipoBeneficioId = dbConnection.TipoBeneficios.FirstOrDefault(x => x.Description == planilha.Cells[linha, 8].Value.ToString()).Id;
 
+                        Beneficio beneficio = new Beneficio();
+                        beneficio.NivelID = nivelID;
+                        beneficio.TipoBeneficioId = tipoBeneficioId;
+                        dbConnection.Beneficios.Add(beneficio);
+                        dbConnection.SaveChanges();
+
+
+                        var checkValor = dbConnection.DepositosBeneficios.FirstOrDefault(x => x.Value == float.Parse(planilha.Cells[linha, 17].Value.ToString()));
+                        var checkVencimento = dbConnection.DepositosBeneficios.FirstOrDefault(x => x.Vencimento == Convert.ToDateTime(planilha.Cells[linha, 18].Value.ToString()));
+                        var funcionarioId = dbConnection.Funcionarios.FirstOrDefault(x => x.Cpf == Convert.ToString(planilha.Cells[linha, 4].Value.ToString())).Id;
+                       
+                        var beneficioId = dbConnection.Beneficios.FirstOrDefault(x => x.TipoBeneficioId == tipoBeneficioId && x.NivelID == nivelID).Id;
 
                         if(checkValor == null && checkVencimento == null)
                         {
                             DepositoBeneficio DBeneficio = new DepositoBeneficio();
                             DBeneficio.Value = float.Parse(planilha.Cells[linha, 17].Value.ToString());
-                            DBeneficio.Vencimento = planilha.Cells[linha, 18].Value.ToString();
+                            DBeneficio.Vencimento = Convert.ToDateTime(planilha.Cells[linha, 18].Value.ToString());
                             DBeneficio.BeneficioId = beneficioId;
                             DBeneficio.FuncionarioId = funcionarioId;
                             dbConnection.DepositosBeneficios.Add(DBeneficio);
@@ -167,25 +165,70 @@ namespace Domain
             optionsBuilder.UseSqlServer(@"Server=(localdb)\MSSQLLocalDB;Database=EFCore.Demo;Trusted_Connection=True;");
         }
 
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            
-            modelBuilder.Entity<Funcionario>().ToTable("Funcionario")
-                .HasKey(p => p.Id);
+            modelBuilder.Entity<Beneficio>(entity => 
+            {
 
-            modelBuilder.Entity<ModalidadeCargo>().HasKey(p => p.Id);
+            //Beneficio
+           entity.HasKey(x => x.Id);
 
-            modelBuilder.Entity<Cargo>().HasKey(p => p.Id);
+            entity.HasOne(x=>x.TipoBeneficio)
+            .WithMany(d => d.Beneficios)
+            .OnDelete(DeleteBehavior.Restrict);
 
-            modelBuilder.Entity<ModalidadeDeContrato>().HasKey(p => p.Id);
+           
+            entity.HasOne(x => x.Nivel)
+            .WithMany(d => d.Beneficios)
+            .OnDelete(DeleteBehavior.Restrict);
+            });
 
-            modelBuilder.Entity<Nivel>().HasKey(p => p.Id);
+            modelBuilder.Entity<DepositoBeneficio>(entity => 
+            {
+                entity.HasKey(x => x.Id);
 
-            modelBuilder.Entity<Deposito>().HasKey(p => p.Id);
+                entity.HasOne(x => x.Beneficio)
+                .WithMany(d => d.DepositoBeneficios)
+                .OnDelete(DeleteBehavior.Restrict);
 
-            modelBuilder.Entity<TipoBeneficio>().HasKey(p => p.Id);
+                entity.HasOne(x => x.Funcionario)
+                .WithMany(d => d.DepositoBeneficios)
+                .OnDelete(DeleteBehavior.Restrict);
+            });
+
+            modelBuilder.Entity<Funcionario>(entity => {
+
+                entity.HasKey(x => x.Id);
+
+                entity.HasOne(x => x.ModalidadeCargo)
+                .WithMany(d => d.Funcionarios)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            });
+
+            modelBuilder.Entity<ModalidadeCargo>(entity => 
+            {
+                
+                entity.HasKey(x => x.Id);
+
+                entity.HasOne(x => x.Cargo)
+                .WithMany(d => d.ModalidadeCargos)
+                .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne(x => x.Nivel)
+                .WithMany(d =>d.ModalidadeCargos)
+                .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne(x => x.ModalidadeDeContrato)
+                .WithMany(d => d.ModalidadeCargos)
+                .OnDelete(DeleteBehavior.Restrict);
+                
+            });
+
+
+        }
 
         }
     }
-}
 

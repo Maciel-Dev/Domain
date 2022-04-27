@@ -15,7 +15,7 @@ namespace Domain
         public string Description { get; set; }
         public float Value { get; set; }
         public float Percent { get; set; }
-
-        public Beneficio Beneficios { get; set; }
+        
+        public IEnumerable<Beneficio> Beneficios { get; set; }
     }
 }

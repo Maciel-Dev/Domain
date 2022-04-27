@@ -13,14 +13,15 @@ namespace Domain
         [Required]
         public int Id { get; set; }
         public float Value { get; set; }
-        public string Vencimento { get; set; }
-
-        public Beneficio Beneficio { get; set; }
-        public int BeneficioId { get; set; }
-
-        public Funcionario Funcionario { get; set; }
-        public int FuncionarioId { get; set; }
+        public DateTime Vencimento { get; set; }
+        [ForeignKey("BeneficioId")]
+        public virtual Beneficio Beneficio { get; set; }
+        public int? BeneficioId { get; set; }
+        [ForeignKey("FuncionarioId")]
+        public virtual Funcionario Funcionario { get; set; }
+        public int? FuncionarioId { get; set; }
 
 
     }
 }
+

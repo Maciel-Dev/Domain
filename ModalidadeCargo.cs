@@ -13,11 +13,17 @@ namespace Domain
         [Required]
         public int Id { get; set; }
         //public ModalidadeDeContrato ModalidadeDeContrato {get; set;}
-        public int ModalidadeContratoID { get; set; }
-        public Cargo Cargo {get; set;}
-        public int CargoID { get; set; }
-        public Nivel Nivel {get; set;}
-        public int NivelID { get; set; }
+        [ForeignKey("ModalidadeContratoID")]
+        public virtual ModalidadeDeContrato ModalidadeDeContrato { get; set; }
+        public int? ModalidadeContratoID { get; set; }
+        [ForeignKey("CargoID")]
+        public virtual Cargo Cargo {get; set;}
+        public int? CargoID { get; set; }
+        [ForeignKey("NivelID")]
+        public virtual Nivel Nivel {get; set;}
+        public int? NivelID { get; set; }
+
+        public IEnumerable<Funcionario> Funcionarios { get; set; }
 
         
     }
