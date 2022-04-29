@@ -77,6 +77,8 @@ namespace Domain
                         var nivelID = dbConnection.NiveisFuncionario.FirstOrDefault(x => x.Tipo == planilha.Cells[linha, 5].Value.ToString()).Id;
                         var cargoId = dbConnection.Cargos.FirstOrDefault(x => x.Tipo == planilha.Cells[linha, 11].Value.ToString()).Id;
                         var modalidadeContratoId = dbConnection.ModalidadeDeContratos.FirstOrDefault(x => x.Description == planilha.Cells[linha, 7].Value.ToString()).Id;
+                        
+                        
 
                         ModalidadeCargo modalidadeCargo = new ModalidadeCargo();
                         
