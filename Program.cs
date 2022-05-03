@@ -79,6 +79,8 @@ namespace Domain
                         var modalidadeContratoId = dbConnection.ModalidadeDeContratos.FirstOrDefault(x => x.Description == planilha.Cells[linha, 7].Value.ToString()).Id;
                         
                         
+                        if(checkNivel == null || checkCargo == null || checkDescMC == null || checkHourMC == null)
+                        {
 
                         ModalidadeCargo modalidadeCargo = new ModalidadeCargo();
                         
@@ -88,17 +90,36 @@ namespace Domain
 
                         dbConnection.ModalidadeCargos.Add(modalidadeCargo);
                         dbConnection.SaveChanges();
+                        }
 
+                        var checkCEP = dbConnection.Enderecos.FirstOrDefault(x => x.CEP == int.Parse(planilha.Cells[linha, 21].Value.ToString()));
+                        var checkNumero = dbConnection.Enderecos.FirstOrDefault(x => x.Numero == int.Parse(planilha.Cells[linha, 20].Value.ToString()));
+
+                        if(checkCEP == null || checkNumero == null)
+                        {
+                            Endereco endereco = new Endereco();
+
+                            endereco.CEP = int.Parse(planilha.Cells[linha, 21].Value.ToString());
+                            endereco.Logradouro = planilha.Cells[linha, 19].Value.ToString();
+                            endereco.Numero = int.Parse(planilha.Cells[linha, 20].Value.ToString());
+                            endereco.Complemento = planilha.Cells[linha, 22].Value.ToString();
+
+                            dbConnection.Enderecos.Add(endereco);
+                            dbConnection.SaveChanges();
+
+
+
+                        }
 
                         var modalidadeCargoId = dbConnection.ModalidadeCargos.FirstOrDefault(x => x.CargoID == cargoId && x.NivelID == nivelID && x.ModalidadeContratoID == modalidadeContratoId).Id;
-                        
+                        var enderecoId = dbConnection.Enderecos.FirstOrDefault(x => x.CEP == int.Parse(planilha.Cells[linha, 21].Value.ToString())).Id;
                         var checkFuncionario = dbConnection.Funcionarios.FirstOrDefault(x => x.Cpf == Convert.ToString(planilha.Cells[linha, 4].Value.ToString()));
                         if(checkFuncionario == null)
                         {
                             Funcionario funcionario = new Funcionario();
                             funcionario.Nome = planilha.Cells[linha, 1].Value.ToString();
                             funcionario.Sobrenome = planilha.Cells[linha, 2].Value.ToString();
-                            funcionario.Endereco = planilha.Cells[linha, 3].Value.ToString();
+                            funcionario.enderecoId = enderecoId;
                             funcionario.Cpf = Convert.ToString(planilha.Cells[linha, 4].Value.ToString());
                             funcionario.modalidadeCargoId = modalidadeCargoId;
                             dbConnection.Funcionarios.Add(funcionario);
@@ -131,7 +152,7 @@ namespace Domain
                        
                         var beneficioId = dbConnection.Beneficios.FirstOrDefault(x => x.TipoBeneficioId == tipoBeneficioId && x.NivelID == nivelID).Id;
 
-                        if(checkValor == null && checkVencimento == null)
+                        if(checkValor == null || checkVencimento == null)
                         {
                             DepositoBeneficio DBeneficio = new DepositoBeneficio();
                             DBeneficio.Value = float.Parse(planilha.Cells[linha, 17].Value.ToString());
@@ -160,6 +181,7 @@ namespace Domain
         public DbSet<Deposito> Depositos { get; set; }
         public DbSet<DepositoBeneficio> DepositosBeneficios { get; set; }
         public DbSet<Beneficio> Beneficios { get; set; }
+        public DbSet<Endereco> Enderecos { get; set; }
        
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

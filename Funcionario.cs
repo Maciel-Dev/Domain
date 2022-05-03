@@ -18,12 +18,15 @@ namespace Domain
         [MaxLength(255)]
         public string Nome { get; set; }
         public string Sobrenome { get; set; }
-        public string Endereco { get; set; }
         public string Cpf { get; set; }
         [ForeignKey("modalidadeCargoId")]
         public virtual ModalidadeCargo ModalidadeCargo {get; set;}
         public int? modalidadeCargoId { get; set; }
+
+        public virtual Endereco Endereco { get; set; }
+        public int? enderecoId { get; set; }
         public IEnumerable<DepositoBeneficio> DepositoBeneficios { get; set; }
+
 
 
     }

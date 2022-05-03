@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Domain.Migrations
 {
-    public partial class v7 : Migration
+    public partial class v1 : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -35,6 +35,22 @@ namespace Domain.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Enderecos",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Logradouro = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
+                    Numero = table.Column<int>(type: "int", nullable: false),
+                    CEP = table.Column<int>(type: "int", nullable: false),
+                    Complemento = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Enderecos", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "ModalidadeDeContratos",
                 columns: table => new
                 {
@@ -62,12 +78,27 @@ namespace Domain.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "TipoBeneficios",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Value = table.Column<float>(type: "real", nullable: false),
+                    Percent = table.Column<float>(type: "real", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TipoBeneficios", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "ModalidadeCargos",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    ModalidadeContratoID = table.Column<int>(type: "int", nullable: false),
+                    ModalidadeContratoID = table.Column<int>(type: "int", nullable: true),
                     CargoID = table.Column<int>(type: "int", nullable: true),
                     NivelID = table.Column<int>(type: "int", nullable: true)
                 },
@@ -81,73 +112,17 @@ namespace Domain.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
+                        name: "FK_ModalidadeCargos_ModalidadeDeContratos_ModalidadeContratoID",
+                        column: x => x.ModalidadeContratoID,
+                        principalTable: "ModalidadeDeContratos",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
                         name: "FK_ModalidadeCargos_NiveisFuncionario_NivelID",
                         column: x => x.NivelID,
                         principalTable: "NiveisFuncionario",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Funcionarios",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Nome = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
-                    Sobrenome = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Endereco = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Cpf = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    modalidadeCargoId = table.Column<int>(type: "int", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Funcionarios", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Funcionarios_ModalidadeCargos_modalidadeCargoId",
-                        column: x => x.modalidadeCargoId,
-                        principalTable: "ModalidadeCargos",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "DepositosBeneficios",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Value = table.Column<float>(type: "real", nullable: false),
-                    Vencimento = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    BeneficioId = table.Column<int>(type: "int", nullable: true),
-                    FuncionarioId = table.Column<int>(type: "int", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_DepositosBeneficios", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_DepositosBeneficios_Funcionarios_FuncionarioId",
-                        column: x => x.FuncionarioId,
-                        principalTable: "Funcionarios",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "TipoBeneficios",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Value = table.Column<float>(type: "real", nullable: false),
-                    Percent = table.Column<float>(type: "real", nullable: false),
-                    Beneficio = table.Column<int>(type: "int", nullable: true),
-                    BeneficioId = table.Column<int>(type: "int", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_TipoBeneficios", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -176,6 +151,63 @@ namespace Domain.Migrations
                         onDelete: ReferentialAction.Restrict);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "Funcionarios",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Nome = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
+                    Sobrenome = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Cpf = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    modalidadeCargoId = table.Column<int>(type: "int", nullable: true),
+                    enderecoId = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Funcionarios", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Funcionarios_Enderecos_enderecoId",
+                        column: x => x.enderecoId,
+                        principalTable: "Enderecos",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Funcionarios_ModalidadeCargos_modalidadeCargoId",
+                        column: x => x.modalidadeCargoId,
+                        principalTable: "ModalidadeCargos",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "DepositosBeneficios",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Value = table.Column<float>(type: "real", nullable: false),
+                    Vencimento = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    BeneficioId = table.Column<int>(type: "int", nullable: true),
+                    FuncionarioId = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_DepositosBeneficios", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_DepositosBeneficios_Beneficios_BeneficioId",
+                        column: x => x.BeneficioId,
+                        principalTable: "Beneficios",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_DepositosBeneficios_Funcionarios_FuncionarioId",
+                        column: x => x.FuncionarioId,
+                        principalTable: "Funcionarios",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_Beneficios_NivelID",
                 table: "Beneficios",
@@ -197,6 +229,11 @@ namespace Domain.Migrations
                 column: "FuncionarioId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Funcionarios_enderecoId",
+                table: "Funcionarios",
+                column: "enderecoId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Funcionarios_modalidadeCargoId",
                 table: "Funcionarios",
                 column: "modalidadeCargoId");
@@ -207,42 +244,18 @@ namespace Domain.Migrations
                 column: "CargoID");
 
             migrationBuilder.CreateIndex(
+                name: "IX_ModalidadeCargos_ModalidadeContratoID",
+                table: "ModalidadeCargos",
+                column: "ModalidadeContratoID");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_ModalidadeCargos_NivelID",
                 table: "ModalidadeCargos",
                 column: "NivelID");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_TipoBeneficios_Beneficio",
-                table: "TipoBeneficios",
-                column: "Beneficio");
-
-            migrationBuilder.AddForeignKey(
-                name: "FK_DepositosBeneficios_Beneficios_BeneficioId",
-                table: "DepositosBeneficios",
-                column: "BeneficioId",
-                principalTable: "Beneficios",
-                principalColumn: "Id",
-                onDelete: ReferentialAction.Restrict);
-
-            migrationBuilder.AddForeignKey(
-                name: "FK_TipoBeneficios_Beneficios_Beneficio",
-                table: "TipoBeneficios",
-                column: "Beneficio",
-                principalTable: "Beneficios",
-                principalColumn: "Id",
-                onDelete: ReferentialAction.Restrict);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropForeignKey(
-                name: "FK_Beneficios_NiveisFuncionario_NivelID",
-                table: "Beneficios");
-
-            migrationBuilder.DropForeignKey(
-                name: "FK_Beneficios_TipoBeneficios_TipoBeneficioId",
-                table: "Beneficios");
-
             migrationBuilder.DropTable(
                 name: "Depositos");
 
@@ -250,10 +263,16 @@ namespace Domain.Migrations
                 name: "DepositosBeneficios");
 
             migrationBuilder.DropTable(
-                name: "ModalidadeDeContratos");
+                name: "Beneficios");
 
             migrationBuilder.DropTable(
                 name: "Funcionarios");
+
+            migrationBuilder.DropTable(
+                name: "TipoBeneficios");
+
+            migrationBuilder.DropTable(
+                name: "Enderecos");
 
             migrationBuilder.DropTable(
                 name: "ModalidadeCargos");
@@ -262,13 +281,10 @@ namespace Domain.Migrations
                 name: "Cargos");
 
             migrationBuilder.DropTable(
+                name: "ModalidadeDeContratos");
+
+            migrationBuilder.DropTable(
                 name: "NiveisFuncionario");
-
-            migrationBuilder.DropTable(
-                name: "TipoBeneficios");
-
-            migrationBuilder.DropTable(
-                name: "Beneficios");
         }
     }
 }

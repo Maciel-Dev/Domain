@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Domain.Migrations
 {
     [DbContext(typeof(FuncionarioContext))]
-    [Migration("20220427181208_v7")]
-    partial class v7
+    [Migration("20220502182400_v1")]
+    partial class v1
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -104,6 +104,32 @@ namespace Domain.Migrations
                     b.ToTable("DepositosBeneficios");
                 });
 
+            modelBuilder.Entity("Domain.Endereco", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("CEP")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Complemento")
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<string>("Logradouro")
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<int>("Numero")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Enderecos");
+                });
+
             modelBuilder.Entity("Domain.Funcionario", b =>
                 {
                     b.Property<int>("Id")
@@ -114,9 +140,6 @@ namespace Domain.Migrations
                     b.Property<string>("Cpf")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Endereco")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Nome")
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
@@ -124,10 +147,15 @@ namespace Domain.Migrations
                     b.Property<string>("Sobrenome")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int?>("enderecoId")
+                        .HasColumnType("int");
+
                     b.Property<int?>("modalidadeCargoId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("enderecoId");
 
                     b.HasIndex("modalidadeCargoId");
 
@@ -144,7 +172,7 @@ namespace Domain.Migrations
                     b.Property<int?>("CargoID")
                         .HasColumnType("int");
 
-                    b.Property<int>("ModalidadeContratoID")
+                    b.Property<int?>("ModalidadeContratoID")
                         .HasColumnType("int");
 
                     b.Property<int?>("NivelID")
@@ -153,6 +181,8 @@ namespace Domain.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("CargoID");
+
+                    b.HasIndex("ModalidadeContratoID");
 
                     b.HasIndex("NivelID");
 
@@ -199,12 +229,6 @@ namespace Domain.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int?>("Beneficio")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("BeneficioId")
-                        .HasColumnType("int");
-
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
@@ -216,20 +240,20 @@ namespace Domain.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Beneficio");
-
                     b.ToTable("TipoBeneficios");
                 });
 
             modelBuilder.Entity("Domain.Beneficio", b =>
                 {
                     b.HasOne("Domain.Nivel", "Nivel")
-                        .WithMany()
-                        .HasForeignKey("NivelID");
+                        .WithMany("Beneficios")
+                        .HasForeignKey("NivelID")
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("Domain.TipoBeneficio", "TipoBeneficio")
-                        .WithMany()
-                        .HasForeignKey("TipoBeneficioId");
+                        .WithMany("Beneficios")
+                        .HasForeignKey("TipoBeneficioId")
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("Nivel");
 
@@ -240,11 +264,13 @@ namespace Domain.Migrations
                 {
                     b.HasOne("Domain.Beneficio", "Beneficio")
                         .WithMany("DepositoBeneficios")
-                        .HasForeignKey("BeneficioId");
+                        .HasForeignKey("BeneficioId")
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("Domain.Funcionario", "Funcionario")
-                        .WithMany()
-                        .HasForeignKey("FuncionarioId");
+                        .WithMany("DepositoBeneficios")
+                        .HasForeignKey("FuncionarioId")
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("Beneficio");
 
@@ -253,9 +279,16 @@ namespace Domain.Migrations
 
             modelBuilder.Entity("Domain.Funcionario", b =>
                 {
+                    b.HasOne("Domain.Endereco", "Endereco")
+                        .WithMany("Funcionarios")
+                        .HasForeignKey("enderecoId");
+
                     b.HasOne("Domain.ModalidadeCargo", "ModalidadeCargo")
-                        .WithMany()
-                        .HasForeignKey("modalidadeCargoId");
+                        .WithMany("Funcionarios")
+                        .HasForeignKey("modalidadeCargoId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("Endereco");
 
                     b.Navigation("ModalidadeCargo");
                 });
@@ -263,30 +296,67 @@ namespace Domain.Migrations
             modelBuilder.Entity("Domain.ModalidadeCargo", b =>
                 {
                     b.HasOne("Domain.Cargo", "Cargo")
-                        .WithMany()
-                        .HasForeignKey("CargoID");
+                        .WithMany("ModalidadeCargos")
+                        .HasForeignKey("CargoID")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Domain.ModalidadeDeContrato", "ModalidadeDeContrato")
+                        .WithMany("ModalidadeCargos")
+                        .HasForeignKey("ModalidadeContratoID")
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("Domain.Nivel", "Nivel")
-                        .WithMany()
-                        .HasForeignKey("NivelID");
+                        .WithMany("ModalidadeCargos")
+                        .HasForeignKey("NivelID")
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("Cargo");
 
+                    b.Navigation("ModalidadeDeContrato");
+
                     b.Navigation("Nivel");
-                });
-
-            modelBuilder.Entity("Domain.TipoBeneficio", b =>
-                {
-                    b.HasOne("Domain.Beneficio", "Beneficios")
-                        .WithMany()
-                        .HasForeignKey("Beneficio");
-
-                    b.Navigation("Beneficios");
                 });
 
             modelBuilder.Entity("Domain.Beneficio", b =>
                 {
                     b.Navigation("DepositoBeneficios");
+                });
+
+            modelBuilder.Entity("Domain.Cargo", b =>
+                {
+                    b.Navigation("ModalidadeCargos");
+                });
+
+            modelBuilder.Entity("Domain.Endereco", b =>
+                {
+                    b.Navigation("Funcionarios");
+                });
+
+            modelBuilder.Entity("Domain.Funcionario", b =>
+                {
+                    b.Navigation("DepositoBeneficios");
+                });
+
+            modelBuilder.Entity("Domain.ModalidadeCargo", b =>
+                {
+                    b.Navigation("Funcionarios");
+                });
+
+            modelBuilder.Entity("Domain.ModalidadeDeContrato", b =>
+                {
+                    b.Navigation("ModalidadeCargos");
+                });
+
+            modelBuilder.Entity("Domain.Nivel", b =>
+                {
+                    b.Navigation("Beneficios");
+
+                    b.Navigation("ModalidadeCargos");
+                });
+
+            modelBuilder.Entity("Domain.TipoBeneficio", b =>
+                {
+                    b.Navigation("Beneficios");
                 });
 #pragma warning restore 612, 618
         }
