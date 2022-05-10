@@ -30,7 +30,7 @@ namespace Domain
 
         public static void LerArquivo()
         { 
-            FileInfo caminho = new FileInfo(@"C:\Users\Joao Maciel\Documents\Infosis\Infosis.xlsx");
+            FileInfo caminho = new FileInfo(@"Infosis.xlsx");
             ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
 
             using(ExcelPackage package = new ExcelPackage(caminho))
