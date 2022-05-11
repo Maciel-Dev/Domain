@@ -10,6 +10,7 @@ namespace Domain
 {
     public class Beneficio
     {
+        [Required]
         public int Id { get; set; }
         [ForeignKey("NivelID")]
         public virtual Nivel Nivel {get; set;}
