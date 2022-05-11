@@ -138,18 +138,21 @@ namespace Domain
                             dbConnection.SaveChanges();
                         }
                         var tipoBeneficioId = dbConnection.TipoBeneficios.FirstOrDefault(x => x.Description == planilha.Cells[linha, 8].Value.ToString()).Id;
+                        
+                        
 
-                        Beneficio beneficio = new Beneficio();
-                        beneficio.NivelID = nivelID;
-                        beneficio.TipoBeneficioId = tipoBeneficioId;
-                        dbConnection.Beneficios.Add(beneficio);
-                        dbConnection.SaveChanges();
-
+                        if(checkNivel == null || checkTipoBeneficio == null)
+                        {
+                            Beneficio beneficio = new Beneficio();
+                            beneficio.NivelID = nivelID;
+                            beneficio.TipoBeneficioId = tipoBeneficioId;
+                            dbConnection.Beneficios.Add(beneficio);
+                            dbConnection.SaveChanges();
+                        }
 
                         var checkValor = dbConnection.DepositosBeneficios.FirstOrDefault(x => x.Value == float.Parse(planilha.Cells[linha, 17].Value.ToString()));
                         var checkVencimento = dbConnection.DepositosBeneficios.FirstOrDefault(x => x.Vencimento == Convert.ToDateTime(planilha.Cells[linha, 18].Value.ToString()));
                         var funcionarioId = dbConnection.Funcionarios.FirstOrDefault(x => x.Cpf == Convert.ToString(planilha.Cells[linha, 4].Value.ToString())).Id;
-                       
                         var beneficioId = dbConnection.Beneficios.FirstOrDefault(x => x.TipoBeneficioId == tipoBeneficioId && x.NivelID == nivelID).Id;
 
                         if(checkValor == null || checkVencimento == null)
