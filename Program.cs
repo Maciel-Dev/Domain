@@ -42,7 +42,9 @@ namespace Domain
                 {
                     for(int linha = 2; linha <= maxRows; linha++)
                     {
-
+                        //object a = planilha.Cells[linha, 17].Value;
+                        //Console.WriteLine(a.GetType());
+                        
                         var checkCargo = dbConnection.Cargos.FirstOrDefault(x => x.Tipo == planilha.Cells[linha, 11].Value.ToString());
                         if(checkCargo == null)
                         {
@@ -139,23 +141,28 @@ namespace Domain
                         }
                         var tipoBeneficioId = dbConnection.TipoBeneficios.FirstOrDefault(x => x.Description == planilha.Cells[linha, 8].Value.ToString()).Id;
 
-                        Beneficio beneficio = new Beneficio();
-                        beneficio.NivelID = nivelID;
-                        beneficio.TipoBeneficioId = tipoBeneficioId;
-                        dbConnection.Beneficios.Add(beneficio);
-                        dbConnection.SaveChanges();
 
 
-                        var checkValor = dbConnection.DepositosBeneficios.FirstOrDefault(x => x.Value == float.Parse(planilha.Cells[linha, 17].Value.ToString()));
+                        if(checkTipoBeneficio == null || checkNivel == null)
+                        {
+                            Beneficio beneficio = new Beneficio();
+                            beneficio.NivelID = nivelID;
+                            beneficio.TipoBeneficioId = tipoBeneficioId;
+                            dbConnection.Beneficios.Add(beneficio);
+                            dbConnection.SaveChanges();
+                        }
+                        var checkValor = dbConnection.DepositosBeneficios.FirstOrDefault(a => a.Value == double.Parse(planilha.Cells[linha, 17].Value.ToString()));
                         var checkVencimento = dbConnection.DepositosBeneficios.FirstOrDefault(x => x.Vencimento == Convert.ToDateTime(planilha.Cells[linha, 18].Value.ToString()));
-                        var funcionarioId = dbConnection.Funcionarios.FirstOrDefault(x => x.Cpf == Convert.ToString(planilha.Cells[linha, 4].Value.ToString())).Id;
+                        var funcionarioId = dbConnection.Funcionarios.FirstOrDefault(y => y.Cpf == Convert.ToString(planilha.Cells[linha, 4].Value.ToString())).Id;
                        
+                        
+
                         var beneficioId = dbConnection.Beneficios.FirstOrDefault(x => x.TipoBeneficioId == tipoBeneficioId && x.NivelID == nivelID).Id;
 
                         if(checkValor == null || checkVencimento == null)
                         {
                             DepositoBeneficio DBeneficio = new DepositoBeneficio();
-                            DBeneficio.Value = float.Parse(planilha.Cells[linha, 17].Value.ToString());
+                            DBeneficio.Value = double.Parse(planilha.Cells[linha, 17].Value.ToString());
                             DBeneficio.Vencimento = Convert.ToDateTime(planilha.Cells[linha, 18].Value.ToString());
                             DBeneficio.BeneficioId = beneficioId;
                             DBeneficio.FuncionarioId = funcionarioId;
