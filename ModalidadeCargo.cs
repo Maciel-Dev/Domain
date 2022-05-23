@@ -18,7 +18,7 @@ namespace Domain
         public int? ModalidadeContratoID { get; set; }
         [ForeignKey("CargoID")]
         public virtual Cargo Cargo {get; set;}
-        public int? CargoID { get; set; }
+        public int CargoID { get; set; }
         [ForeignKey("NivelID")]
         public virtual Nivel Nivel {get; set;}
         public int? NivelID { get; set; }

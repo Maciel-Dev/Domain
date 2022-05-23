@@ -21,20 +21,6 @@ namespace Domain.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Depositos",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    ValorDepositoFuncionario = table.Column<double>(type: "float", nullable: false),
-                    Data = table.Column<DateTime>(type: "Datetime", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Depositos", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Enderecos",
                 columns: table => new
                 {
@@ -99,7 +85,7 @@ namespace Domain.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     ModalidadeContratoID = table.Column<int>(type: "int", nullable: true),
-                    CargoID = table.Column<int>(type: "int", nullable: true),
+                    CargoID = table.Column<int>(type: "int", nullable: false),
                     NivelID = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
@@ -131,8 +117,8 @@ namespace Domain.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    NivelID = table.Column<int>(type: "int", nullable: true),
-                    TipoBeneficioId = table.Column<int>(type: "int", nullable: true)
+                    NivelID = table.Column<int>(type: "int", nullable: false),
+                    TipoBeneficioId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -161,7 +147,7 @@ namespace Domain.Migrations
                     Sobrenome = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Endereco = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Cpf = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    modalidadeCargoId = table.Column<int>(type: "int", nullable: true),
+                    modalidadeCargoId = table.Column<int>(type: "int", nullable: false),
                     EnderecoId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
@@ -190,7 +176,7 @@ namespace Domain.Migrations
                     Value = table.Column<double>(type: "float", nullable: false),
                     Vencimento = table.Column<DateTime>(type: "datetime2", nullable: false),
                     BeneficioId = table.Column<int>(type: "int", nullable: true),
-                    FuncionarioId = table.Column<int>(type: "int", nullable: true)
+                    FuncionarioId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -209,6 +195,27 @@ namespace Domain.Migrations
                         onDelete: ReferentialAction.Restrict);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "Depositos",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ValorDepositoFuncionario = table.Column<double>(type: "float", nullable: false),
+                    Data = table.Column<DateTime>(type: "Datetime", nullable: false),
+                    DepositoBeneficioId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Depositos", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Depositos_DepositosBeneficios_DepositoBeneficioId",
+                        column: x => x.DepositoBeneficioId,
+                        principalTable: "DepositosBeneficios",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_Beneficios_NivelID",
                 table: "Beneficios",
@@ -218,6 +225,11 @@ namespace Domain.Migrations
                 name: "IX_Beneficios_TipoBeneficioId",
                 table: "Beneficios",
                 column: "TipoBeneficioId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Depositos_DepositoBeneficioId",
+                table: "Depositos",
+                column: "DepositoBeneficioId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_DepositosBeneficios_BeneficioId",

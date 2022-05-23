@@ -22,7 +22,7 @@ namespace Domain
         public string Cpf { get; set; }
         [ForeignKey("modalidadeCargoId")]
         public virtual ModalidadeCargo ModalidadeCargo {get; set;}
-        public int? modalidadeCargoId { get; set; }
+        public int modalidadeCargoId { get; set; }
         public IEnumerable<DepositoBeneficio> DepositoBeneficios { get; set; }
 
 

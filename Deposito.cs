@@ -17,5 +17,9 @@ namespace Domain
         [Column(TypeName = "Datetime")]
         public DateTime Data { get; set; }
 
+        [ForeignKey("DepositoBeneficio")]
+        public int DepositoBeneficioId { get; set; }
+        public virtual DepositoBeneficio DepositoBeneficio { get; set; }
+
     }
 }

@@ -7,6 +7,8 @@ using OfficeOpenXml;
 using System.IO;
 using System.Collections.Generic;
 using System.Linq;
+using Domain.Crud;
+
 
 //Incrementar Chaves Estrangeiras
 //Ler como input Excel
@@ -30,7 +32,7 @@ namespace Domain
 
         public static void LerArquivo()
         { 
-            FileInfo caminho = new FileInfo(@"C:\Users\jvvia\Desktop\Programação\TrabalhoProg2\teste\Infosis\InfosisDb\Domain\Infosis.xlsx");
+            FileInfo caminho = new FileInfo(@"C:\Users\Joao Maciel\Documents\Infosis\Updated\Domain\Infosis.xlsx");
             ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
 
             using(ExcelPackage package = new ExcelPackage(caminho))
@@ -162,7 +164,56 @@ namespace Domain
 
                         else if(option.Contains("A"))
                         {
-                            
+                            var connection = new FuncionarioContext();
+                            var crudFunc = new FuncionarioCrud(connection);
+
+                            var cpfSearch = crudFunc.search(Convert.ToString(planilha.Cells[linha, 5].Value));
+
+                            if(cpfSearch == null)
+                            {
+                                Console.WriteLine("NotFound");
+                            }
+
+                            else
+                            {
+                                cpfSearch.Nome = Convert.ToString(planilha.Cells[linha, 2].Value);
+                                cpfSearch.Sobrenome = Convert.ToString(planilha.Cells[linha, 3].Value);
+                                
+                            }
+
+                        }
+
+                        else if(option.Contains("E"))
+                        {
+                            var connection = new FuncionarioContext();
+                            var crudFunc = new FuncionarioCrud(connection);
+
+                            var cpfSearch = crudFunc.search(Convert.ToString(planilha.Cells[linha, 5].Value));
+
+                            if(cpfSearch == null)
+                            {
+                                Console.WriteLine("Não foi possivel encontrar...");
+                            }
+
+                            else
+                            {
+                                var depositoBeneficioCrud = new BenefitDepositCrud(connection);
+                                var depositoCrud = new DepositCrud(connection);
+                                
+
+                                var benefitIdDeposit = depositoBeneficioCrud.search(cpfSearch.Id);
+
+                                var search = depositoCrud.search(benefitIdDeposit.Id);
+
+                                depositoCrud.deleteDepos(search);
+                                depositoBeneficioCrud.benefitExcludeId(cpfSearch.Id);
+                                crudFunc.deleteFunc(cpfSearch);
+
+                            }
+
+
+
+
                         }
 
                     }
@@ -188,7 +239,7 @@ namespace Domain
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer(@"Server=LAPTOP-SRU8BTNN;Database=EFCore.Demo;Trusted_Connection=True;");
+            optionsBuilder.UseSqlServer(@"Data Source=DESKTOP-0L1361H;Initial Catalog=Teste;Integrated Security=True");
         }
 
 

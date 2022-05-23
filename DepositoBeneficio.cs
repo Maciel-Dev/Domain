@@ -19,7 +19,7 @@ namespace Domain
         public int? BeneficioId { get; set; }
         [ForeignKey("FuncionarioId")]
         public virtual Funcionario Funcionario { get; set; }
-        public int? FuncionarioId { get; set; }
+        public int FuncionarioId { get; set; }
 
 
     }

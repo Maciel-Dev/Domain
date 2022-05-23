@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\jvvia\\Desktop\\Programação\\TrabalhoProg2\\teste\\Infosis\\InfosisDb\\Domain\\Domain.csproj": {}
+    "C:\\Users\\Joao Maciel\\Documents\\Infosis\\Updated\\Domain\\Domain.csproj": {}
   },
   "projects": {
-    "C:\\Users\\jvvia\\Desktop\\Programação\\TrabalhoProg2\\teste\\Infosis\\InfosisDb\\Domain\\Domain.csproj": {
+    "C:\\Users\\Joao Maciel\\Documents\\Infosis\\Updated\\Domain\\Domain.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\jvvia\\Desktop\\Programação\\TrabalhoProg2\\teste\\Infosis\\InfosisDb\\Domain\\Domain.csproj",
+        "projectUniqueName": "C:\\Users\\Joao Maciel\\Documents\\Infosis\\Updated\\Domain\\Domain.csproj",
         "projectName": "Domain",
-        "projectPath": "C:\\Users\\jvvia\\Desktop\\Programação\\TrabalhoProg2\\teste\\Infosis\\InfosisDb\\Domain\\Domain.csproj",
-        "packagesPath": "C:\\Users\\jvvia\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\jvvia\\Desktop\\Programação\\TrabalhoProg2\\teste\\Infosis\\InfosisDb\\Domain\\obj\\",
+        "projectPath": "C:\\Users\\Joao Maciel\\Documents\\Infosis\\Updated\\Domain\\Domain.csproj",
+        "packagesPath": "C:\\Users\\Joao Maciel\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\Joao Maciel\\Documents\\Infosis\\Updated\\Domain\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\jvvia\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\Joao Maciel\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -77,18 +77,12 @@
           ],
           "assetTargetFallback": true,
           "warn": true,
-          "downloadDependencies": [
-            {
-              "name": "Microsoft.NETCore.App.Host.win-x64",
-              "version": "[5.0.13, 5.0.13]"
-            }
-          ],
           "frameworkReferences": {
             "Microsoft.NETCore.App": {
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.101\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.201\\RuntimeIdentifierGraph.json"
         }
       }
     }
