@@ -13,8 +13,8 @@ namespace Domain
         [Required]
         public int Id { get; set; }
         public string Description { get; set; }
-        public float Value { get; set; }
-        public float Percent { get; set; }
+        public int Value { get; set; }
+        public double Percent { get; set; }
         
         public IEnumerable<Beneficio> Beneficios { get; set; }
     }

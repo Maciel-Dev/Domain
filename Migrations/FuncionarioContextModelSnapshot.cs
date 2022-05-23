@@ -87,8 +87,8 @@ namespace Domain.Migrations
                     b.Property<int?>("FuncionarioId")
                         .HasColumnType("int");
 
-                    b.Property<float>("Value")
-                        .HasColumnType("real");
+                    b.Property<double>("Value")
+                        .HasColumnType("float");
 
                     b.Property<DateTime>("Vencimento")
                         .HasColumnType("datetime2");
@@ -100,6 +100,32 @@ namespace Domain.Migrations
                     b.HasIndex("FuncionarioId");
 
                     b.ToTable("DepositosBeneficios");
+                });
+
+            modelBuilder.Entity("Domain.Endereco", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("CEP")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Complemento")
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<string>("Logradouro")
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<int>("Numero")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Enderecos");
                 });
 
             modelBuilder.Entity("Domain.Funcionario", b =>
@@ -115,6 +141,9 @@ namespace Domain.Migrations
                     b.Property<string>("Endereco")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int?>("EnderecoId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Nome")
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
@@ -126,6 +155,8 @@ namespace Domain.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("EnderecoId");
 
                     b.HasIndex("modalidadeCargoId");
 
@@ -202,11 +233,11 @@ namespace Domain.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<float>("Percent")
-                        .HasColumnType("real");
+                    b.Property<double>("Percent")
+                        .HasColumnType("float");
 
-                    b.Property<float>("Value")
-                        .HasColumnType("real");
+                    b.Property<int>("Value")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -249,6 +280,10 @@ namespace Domain.Migrations
 
             modelBuilder.Entity("Domain.Funcionario", b =>
                 {
+                    b.HasOne("Domain.Endereco", null)
+                        .WithMany("Funcionarios")
+                        .HasForeignKey("EnderecoId");
+
                     b.HasOne("Domain.ModalidadeCargo", "ModalidadeCargo")
                         .WithMany("Funcionarios")
                         .HasForeignKey("modalidadeCargoId")
@@ -289,6 +324,11 @@ namespace Domain.Migrations
             modelBuilder.Entity("Domain.Cargo", b =>
                 {
                     b.Navigation("ModalidadeCargos");
+                });
+
+            modelBuilder.Entity("Domain.Endereco", b =>
+                {
+                    b.Navigation("Funcionarios");
                 });
 
             modelBuilder.Entity("Domain.Funcionario", b =>

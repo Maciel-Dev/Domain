@@ -12,7 +12,7 @@ namespace Domain
     {
         [Required]
         public int Id { get; set; }
-        public float Value { get; set; }
+        public double Value { get; set; }
         public DateTime Vencimento { get; set; }
         [ForeignKey("BeneficioId")]
         public virtual Beneficio Beneficio { get; set; }
